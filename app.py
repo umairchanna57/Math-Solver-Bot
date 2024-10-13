@@ -8,8 +8,7 @@ from langchain.utilities import WikipediaAPIWrapper
 
 app = Flask(__name__)
 
-# HuggingFace API key and model configuration
-api_key = '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'
+api_key = 'your Hugging Face API key'
 llm = HuggingFaceEndpoint(
     huggingfacehub_api_token=api_key,
     repo_id="mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -17,7 +16,7 @@ llm = HuggingFaceEndpoint(
     max_length=150
 )
 
-# Wikipedia tool setup
+
 wikipedia = WikipediaAPIWrapper()
 wikipedia_tool = Tool(
     name="Wikipedia",
@@ -25,7 +24,7 @@ wikipedia_tool = Tool(
     description="A useful tool for searching the Internet to find information on world events, issues, dates, years, etc. Worth using for general topics. Use precise questions."
 )
 
-# Math tool setup
+
 problem_chain = LLMMathChain.from_llm(llm=llm)
 math_tool = Tool.from_function(
     name="Calculator",
@@ -33,7 +32,7 @@ math_tool = Tool.from_function(
     description="Useful for when you need to answer questions about math. This tool is only for math questions and nothing else. Only input math expressions."
 )
 
-# Reasoning tool setup
+
 word_problem_template = """You are a reasoning agent tasked with solving the user's logic-based questions. Logically arrive at the solution and be factual. In your answers, YOUR FINAL ANSWER SHOULD BE IN DETAILS NOT ONLY ANSWER clearly detail the steps involved and give the final answer. Provide the response in bullet points, and ensure all explanations are included in the final answer.
 Question: {input}
 Answer:"""
@@ -49,7 +48,7 @@ word_problem_tool = Tool.from_function(
     description="Useful for when you need to answer logic-based/reasoning questions."
 )
 
-# Initialize the agent
+
 agent = initialize_agent(
     tools=[wikipedia_tool, math_tool, word_problem_tool],
     llm=llm,
@@ -67,7 +66,6 @@ def index():
 def solve():
     input_data = request.json
     response = agent.invoke({"input": input_data['question']})
-    # Extract only the 'output' part of the response
     answer = response['output']
     return answer
 
